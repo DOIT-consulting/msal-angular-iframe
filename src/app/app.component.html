@@ -1,0 +1,8 @@
+<div *ngIf="isLogged && !silentLoginFailed">
+  <app-profile *ngIf="isIframe"></app-profile>
+  <!-- This line could be used if routing is enabled outside iframe -->
+  <!-- <router-outlet *ngIf="!isIframe"></router-outlet> -->
+</div>
+<ng-container *ngIf="!isLogged && silentLoginFailed">
+  <button (click)="loginPopup()">Login</button>
+</ng-container>
