@@ -54,22 +54,13 @@ export class AppComponent implements OnInit, OnDestroy {
           this.authService.handleRedirectObservable().subscribe(
             (data: AuthenticationResult) => {
               const account = this.authService.instance.getActiveAccount();
-              if (!account) {
+              if (!account && !this.authError) {
                 this.sso();
                 this.authError = "Login failed";
               }
             }
           )
         })
-    }
-  }
-
-  checkAndSetActiveAccount() {
-    let activeAccount = this.authService.instance.getActiveAccount();
-
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      let accounts = this.authService.instance.getAllAccounts();
-      this.authService.instance.setActiveAccount(accounts[0]);
     }
   }
 
@@ -101,25 +92,6 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         });
     }
-  }
-
-  async loginRedirect() {
-    if (this.msalGuardConfig.authRequest) {
-      await this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest);
-    } else {
-      await this.authService.loginRedirect();
-    }
-    this.authService.handleRedirectObservable().subscribe({
-      next: (response: AuthenticationResult) => {
-        this.authError = null;
-        this.authService.instance.setActiveAccount(response.account);
-      },
-      error: (e) => {
-        console.error(e)
-        this.authError = e;
-        this.silentLoginFailed = true;
-      }
-    });
   }
 
   sso() {
